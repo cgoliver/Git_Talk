@@ -18,11 +18,9 @@
 ^
 * git vs [GitHub](www.github.com)
 ^
-* Quick git tour 
+* git quick start 
 ^
 * From the bottom: piping
-^
-* Typical git commands: porcelain
 ^
 * GitHub collaborations
 
@@ -73,14 +71,14 @@ Git is an *offline* tool for version control.
 Create a directory where you will store your project.
 ^
 
-`mkdir Git_Tutorial`
-`cd Git_Tutorial`
+`$ mkdir Git_Tutorial`
+`$ cd Git_Tutorial`
 ^
 
 Initialize git for your directory.
 
 ^
-`git init`
+`$ git init`
 ^
 
 Creates a *hidden* folder `.git` where all content and history of your repository is stored.
@@ -94,14 +92,14 @@ All `git` commands follow the word `git`
 Create some files to track
 ^
 
-`echo "condensed matter matters" > cmgs.txt`
-`echo "not tracking" > hi.txt`
+`$ echo "condensed matter matters" > cmgs.txt`
+`$ echo "not tracking" > hi.txt`
 ^
 
 We have to tell git which files to track.
 ^
 
-`git add cmgs.txt`
+`$ git add cmgs.txt`
 ^
 
 Now git is tracking changes to `cmgs.txt`
@@ -109,7 +107,7 @@ Now git is tracking changes to `cmgs.txt`
 -------------------------------------------------
 -> # Check the status of your repo
 
-`git status`
+`$ git status`
 ^
 
 Prints information on the repo.
@@ -132,7 +130,7 @@ Writing the current state of the repo
 is called *committing*
 ^
 
-`git commit -m "first commit."`
+`$ git commit -m "first commit."`
 ^
 
 Commits require a message describing the change.
@@ -142,8 +140,8 @@ Commits require a message describing the change.
 
 Let's add a line to the end of our file.
 
-`echo "actually no" >> cmgs.txt`
-`git status`
+`$ echo "actually no" >> cmgs.txt`
+`$ git status`
 ^
 
 We should see that git noticed a change.
@@ -151,7 +149,7 @@ We should see that git noticed a change.
 -------------------------------------------------
 -> # See the changes
 
-`git diff`
+`$ git diff`
 ^
 
 Displays differences between last commit
@@ -164,18 +162,18 @@ and current state.
 If we like the changes we can tell git to track them.
 ^
 
-`git add cmgs.txt`
+`$ git add cmgs.txt`
 ^
 
 Let's commit the new version to history.
 ^
 
-`git commit -m "new line"`
+`$ git commit -m "new line"`
 
 -------------------------------------------------
 -> # Viewing repo history
 
-`git log`
+`$ git log`
 ^
 
 Displays all the commits, who made them and when.
@@ -183,7 +181,7 @@ Displays all the commits, who made them and when.
 -------------------------------------------------
 -> # We can go back in time
 
-`git checkout [commit ID\] `
+`$ git checkout [commit ID\] `
 ^
 
 Brings the repo to the state at the given commit.
@@ -193,7 +191,7 @@ Once you're done looking around you can go back
 to the present.
 ^
 
-`git checkout master`
+`$ git checkout master`
 
 -------------------------------------------------
 -> # Branching
@@ -206,7 +204,7 @@ You can create a new independent copy of the repo
 with the same history as the original.
 ^
 
-`git branch test` 
+`$ git branch test` 
 ^
 
 Creates a new branch called `test`
@@ -215,14 +213,14 @@ Creates a new branch called `test`
 You can checkout a branch.
 ^
 
-`git checkout test`
+`$ git checkout test`
 ^
 
 You can commit changes to `test` and they will stay
 in `test`.
 
-`echo "hi from test" >> cmgs.txt"`
-`git checkout master`
+`$ echo "hi from test" >> cmgs.txt"`
+`$ git checkout master`
 
 -------------------------------------------------
 -> # Merging
@@ -230,7 +228,7 @@ in `test`.
 If you liked how things worked in the test branch
 you can merge them to the main, aka master branch.
 
-`git merge test`
+`$ git merge test`
 
 -------------------------------------------------
 -> # Okay now some plumbing
@@ -262,7 +260,7 @@ Most of the info I am presenting on git internals
 is taken from the [Pro Git book](https://git-scm.com/book/en/v2/Git-Internals-Git-Objects).
 
 -------------------------------------------------
-# blobs
+-> # blobs
 
 blobs are the way git stores *file contents*
 ^
@@ -276,7 +274,7 @@ git is a _content addressable_ file-system.
 
 
 -------------------------------------------------
-# making a blob
+-> # making a blob
 
 Let's make a new repo to play around
 with the plumbing.
@@ -309,6 +307,8 @@ b1a1b80ca6f24ccdd220d8db24af08db4e096970
 
 -------------------------------------------------
 
+-> # Storing objects
+
 If we want git to store the result use `-w`
 
 ```
@@ -323,7 +323,56 @@ $ find .git/objects -type f
 ```
 
 -------------------------------------------------
+-> # Low level version control
 
+Let's make a new version of the file.
+^
+
+```
+$ echo "condensed matter doesn't matter" > cmgs.txt
+$ git hash-object -w cmgs.txt
+```
+
+Now we have two objects stores
+^
+
+```
+$ find .git/objects -type f
+.git/objects/3a/918db0eb98806e55545a8457d5fa3675f5270c
+.git/objects/b1/a1b80ca6f24ccdd220d8db24af08db4e096970
+```
+
+-------------------------------------------------
+-> # Reading blobs
+
+Since the hash depends on the content, we have 
+a content-addressable filesystem.
+^
+
+First version
+^
+```
+$ git cat-file -p b1a1b80ca6f24ccdd220d8db24af08db4e096970
+Condensed matter matters
+```
+^
+Second version
+^
+```
+$ git cat-file -p 3a918db0eb98806e55545a8457d5fa3675f5270c
+Condensed matter doesn't matter
+```
+^
+We can revert back to the original version.
+```
+$ git cat-file -p b1a1b80ca6f24ccdd220d8db24af08db4e096970 > cmgs.txt
+```
+^
+
+So now we pretty much have a version control system!
+^
+
+However, not very user-friendly.
 
 -------------------------------------------------
 
@@ -333,27 +382,3 @@ Use *Ctrl + z* to suspend the presentation.
 
 Use *fg* to resume it.
 
--------------------------------------------------
-
--> # Convert your presentation to PDF <-
-
-To publish your presentation later on, you may
-want to convert it to PDF.
-
-This can be achieved by two additional tools:
-
-\- *markdown* to convert to HTML
-\- *wkhtmltopdf* to convert from HTML to PDF
-
-After installing them, you can simply type:
-
-    $ markdown sample.md | wkhtmltopdf - sample.pdf
-
--------------------------------------------------
-
--> ## Last words <-
-
-I hope you like *mdp*.
-
-If you observe strange behavior, feel free to
-open an issue on [GitHub](https://github.com/visit1985/mdp).
