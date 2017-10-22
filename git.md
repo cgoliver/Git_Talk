@@ -18,7 +18,7 @@
 ^
 * git vs [GitHub](www.github.com)
 ^
-* Basic git demo
+* Quick git tour 
 ^
 * From the bottom: piping
 ^
@@ -46,7 +46,7 @@
 ^
 > "I'm an egotistical bastard, and I name all my projects after myself. First 'Linux', now 'git'." - Linus Torvalds
 ^
-* git is now the most widely used VCS
+* git is now the most widely used VCS in the world.
 	- Google
 	- Netflix
 	- Facebook
@@ -55,6 +55,11 @@
 
 -------------------------------------------------
 -> # git vs GitHub
+* Git is an *offline* tool for version control.
+^
+* GitHub is an *online* service for hosting and managing *git* repositories.
+^
+	- You can set up your own [git server](https://git-scm.com/book/en/v2/Git-on-the-Server-Setting-Up-the-Server)
 
 -------------------------------------------------
 -> # Initializing your repository
@@ -110,69 +115,33 @@ Prints information on the repo.
 Useful to run regularly.
 
 -------------------------------------------------
+-> # Writing to history
+
+* Adding a file is something we want to go down in history.
+^
+* Writing the current state of the repo is called *committing*
+^
+`git commit -m "first commit."`
+^
+* Commits require a message describing the change.
+
+
+-------------------------------------------------
 -> # Make a change to track
 
 Let's add a line to the end of our file.
 
 `echo "actually no" >> cmgs.txt`
 `git status`
-
-
--------------------------------------------------
--> # Supported markdown formatting <-
-
-The input file is split into multiple slides by
-horizontal rules (hr). A hr consisting of at
-least 3 *\** or *-*. It can also contain spaces but
-no other characters.
-
-Each of these represents the start of a new slide.
-
-\* \* \*
-\---
-\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*\*
-\- - -
+^
+We should see that git noticed a change.
 
 -------------------------------------------------
+-> # See the changes
 
--> # Supported markdown formatting <-
-
-First-level headers can be prefixed by single *#*
-or underlined by *===*.
-
-\# first-level
-
-becomes
-
-# first-level
-
--------------------------------------------------
-
--> # Supported markdown formatting <-
-
-Second-level headers can be prefixed by *##* or
-underlined by *---*.
-
-second-level
-\------------
-
-becomes
-
-second-level
-------------
-
-
--------------------------------------------------
-
--> # Supported markdown formatting's <-
-
-Inline codes are surrounded with backticks.
-
-C program starts with \`main()\`.
-
-becomes
-
-C program starts with `main()`.
+`git diff`
+^
+Displays differences between last commit and current state.
 
 -------------------------------------------------
 
@@ -196,72 +165,6 @@ becomes
 
 -------------------------------------------------
 
--> # Supported markdown formatting <-
-
-You can also use [pandoc](http://pandoc.org/demo/example9/pandocs-markdown.html)'s fenced code block
-extension. Use at least three ~ chars to open and
-at least as many or more ~ for closing.
-
-\~~~ {.numberLines}
-\int main(int argc, char \*argv[]) {
-\    printf("%s\\n", "Hello world!");
-\}
-\~~~~~~~~~~~~~~~~~~
-
-becomes
-
-~~~ {.numberLines}
-int main(int argc, char *argv[]) {
-    printf("%s\n", "Hello world!");
-}
-~~~~~~~~~~~~~~~~~~
-
-Pandoc attributes (like ".numberlines" etc.)
-will be ignored
-
--------------------------------------------------
-
--> # Supported markdown formatting <-
-
-You can also use [github](https://guides.github.com/features/mastering-markdown/#GitHub-flavored-markdown) flavored markdown's
-code block. Use at least three backticks to open
-and at least as many or more backticks for closing.
-
-\```
-\int main(int argc, char \*argv[]) {
-\    printf("%s\\n", "Hello world!");
-\}
-\```
-
-becomes
-
-```
-int main(int argc, char *argv[]) {
-    printf("%s\n", "Hello world!");
-}
-```
-
-Language hint will be ignored
-
--------------------------------------------------
-
--> # Supported markdown formatting <-
-
-Quotes are auto-detected by preceding *>*.
-
-Multiple *>* are interpreted as nested quotes.
-
-\> quote
-\>> nested quote 1
-\> > nested quote 2
-
-becomes
-
-> quote
->> nested quote 1
-> > nested quote 2
-
--------------------------------------------------
 
 -> # Supported markdown formatting <-
 
