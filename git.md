@@ -30,23 +30,28 @@
 
 -> # What is git? 
 
-* git is a **local** version control system for tracking changes in files.
+git is a **local** version control system for tracking changes in files.
 ^
-* Created by Linus Torvalds (inventor of Linux) in 2005
+
+Created by Linus Torvalds (inventor of Linux) in 2005
 ^
-* Wanted something fast, free and *decentralized*
+
+Wanted something fast, free and *decentralized*
 ^
-* git is *distributed*: everyone has a full *independent* history and copy of the files.
+
+git is *distributed*: everyone has a full *independent* history and copy of the files.
 
 -------------------------------------------------
 
 -> # Fun facts about git
 
-* git is British slang for 'unpleasant person'
+git is British slang for 'unpleasant person'
 ^
+
 > "I'm an egotistical bastard, and I name all my projects after myself. First 'Linux', now 'git'." - Linus Torvalds
 ^
-* git is now the most widely used VCS in the world.
+
+git is now the most widely used VCS in the world.
 	- Google
 	- Netflix
 	- Facebook
@@ -55,8 +60,9 @@
 
 -------------------------------------------------
 -> # git vs GitHub
-* Git is an *offline* tool for version control.
+Git is an *offline* tool for version control.
 ^
+
 * GitHub is an *online* service for hosting and managing *git* repositories.
 ^
 	- You can set up your own [git server](https://git-scm.com/book/en/v2/Git-on-the-Server-Setting-Up-the-Server)
@@ -64,34 +70,35 @@
 -------------------------------------------------
 -> # Initializing your repository
 
-* Create a directory where you will store your project.
+Create a directory where you will store your project.
 ^
 
 `mkdir Git_Tutorial`
 `cd Git_Tutorial`
 ^
 
-* Initialize git for your directory.
-^
+Initialize git for your directory.
 
+^
 `git init`
 ^
 
-* Creates a *hidden* folder `.git` where all content and history of your repository is stored.
+Creates a *hidden* folder `.git` where all content and history of your repository is stored.
+
 ^
-* All `git` commands follow the word `git`
+All `git` commands follow the word `git`
 
 -------------------------------------------------
 -> # Track some files
 
-* Create some files to track
+Create some files to track
 ^
 
 `echo "condensed matter matters" > cmgs.txt`
 `echo "not tracking" > hi.txt`
 ^
 
-* We have to tell git which files to track.
+We have to tell git which files to track.
 ^
 
 `git add cmgs.txt`
@@ -104,6 +111,7 @@ Now git is tracking changes to `cmgs.txt`
 
 `git status`
 ^
+
 Prints information on the repo.
 ^
 * Changes to tracked files
@@ -117,14 +125,17 @@ Useful to run regularly.
 -------------------------------------------------
 -> # Writing to history
 
-* Adding a file is something we want to go down in history.
+Adding a file is something we want to go down in history.
 ^
-* Writing the current state of the repo is called *committing*
+
+Writing the current state of the repo
+is called *committing*
 ^
+
 `git commit -m "first commit."`
 ^
-* Commits require a message describing the change.
 
+Commits require a message describing the change.
 
 -------------------------------------------------
 -> # Make a change to track
@@ -134,6 +145,7 @@ Let's add a line to the end of our file.
 `echo "actually no" >> cmgs.txt`
 `git status`
 ^
+
 We should see that git noticed a change.
 
 -------------------------------------------------
@@ -141,153 +153,176 @@ We should see that git noticed a change.
 
 `git diff`
 ^
-Displays differences between last commit and current state.
+
+Displays differences between last commit
+and current state.
+
+
+-------------------------------------------------
+-> # Stage changes
+
+If we like the changes we can tell git to track them.
+^
+
+`git add cmgs.txt`
+^
+
+Let's commit the new version to history.
+^
+
+`git commit -m "new line"`
+
+-------------------------------------------------
+-> # Viewing repo history
+
+`git log`
+^
+
+Displays all the commits, who made them and when.
+
+-------------------------------------------------
+-> # We can go back in time
+
+`git checkout [commit ID\] `
+^
+
+Brings the repo to the state at the given commit.
+^
+
+Once you're done looking around you can go back 
+to the present.
+^
+
+`git checkout master`
+
+-------------------------------------------------
+-> # Branching
+
+Let's say you want to test a different version
+without affecting the rest of the repo.
+^
+
+You can create a new independent copy of the repo 
+with the same history as the original.
+^
+
+`git branch test` 
+^
+
+Creates a new branch called `test`
+^
+
+You can checkout a branch.
+^
+
+`git checkout test`
+^
+
+You can commit changes to `test` and they will stay
+in `test`.
+
+`echo "hi from test" >> cmgs.txt"`
+`git checkout master`
+
+-------------------------------------------------
+-> # Merging
+
+If you liked how things worked in the test branch
+you can merge them to the main, aka master branch.
+
+`git merge test`
+
+-------------------------------------------------
+-> # Okay now some plumbing
+
+You can get by quite nicely with these commands.
+
+Git calls these the porcelain commands.
+
+To really understand what's happening we have to
+look at the ugly plumbing. 
+
+-------------------------------------------------
+-> # Git Objects
+
+Git stores data in 3 major object types:
+^
+
+1. blob
+^
+2. tree
+^
+3. commit
+^
+
+All the commands we saw mainpulate there 3 object
+types.
+
+Most of the info I am presenting on git internals
+is taken from the [Pro Git book](https://git-scm.com/book/en/v2/Git-Internals-Git-Objects).
+
+-------------------------------------------------
+# blobs
+
+blobs are the way git stores *file contents*
+^
+
+Every version of a file is a different blob.
+^
+
+git is a _content addressable_ file-system.
+^
+	* Data in a repo is accessed based on its *content*.
+
+
+-------------------------------------------------
+# making a blob
+
+Let's make a new repo to play around
+with the plumbing.
+^
+
+```
+$ cd ..
+$ git init Plumbing
+```
+
+Git computes the [SHA1](https://en.wikipedia.org/wiki/SHA-1) hash
+of the file's contents and an automatically generated header.
+
+We can hash content from stdin:
+^
+
+```
+$ echo "condensed matter matters" | git hash-object --stdin 
+b1a1b80ca6f24ccdd220d8db24af08db4e096970
+```
+
+Or from a file:
+^
+```
+$ echo "condensed matter matters" > cmgs.txt
+$ git hash-object cmgs.txt
+b1a1b80ca6f24ccdd220d8db24af08db4e096970
+```
+^
 
 -------------------------------------------------
 
--> # Supported markdown formatting <-
+If we want git to store the result use `-w`
 
-Code blocks are automatically detected by 4 spaces
-at the beginning of a line.
+```
+$ git hash-object -w cmgs.txt
+```
 
-Tabs are automatically expanded to 4 spaces while
-parsing the input.
+This creates a compressed file in `.git/objects`
 
-\    int main(int argc, char \*argv[]) {
-\        printf("%s\\n", "Hello world!");
-\    }
-
-becomes
-
-    int main(int argc, char *argv[]) {
-        printf("%s\n", "Hello world!");
-    }
+```
+$ find .git/objects -type f
+.git/objects/b1/a1b80ca6f24ccdd220d8db24af08db4e096970
+```
 
 -------------------------------------------------
-
-
--> # Supported markdown formatting <-
-
-Inline highlighting is supported as followed:
-
-\- *\** colors text as red
-\- *\_* underlines text
-
-\_some\_ \*highlighted\* \_\*text\*\_
-
-becomes
-
-_some_ *highlighted* _*text*_
-
--------------------------------------------------
-
--> # Supported markdown formatting <-
-
-Backslashes force special markdown characters
-like *\**, *\_*, *#* and *>* to be printed as
-normal characters.
-
-\\\*special\\\*
-
-becomes
-
-\*special\*
-
--------------------------------------------------
-
--> # Supported markdown formatting <-
-
-Leading *\** or *-* indicate lists.
-
-list
-\* major
-\    - minor
-\        - \*important\*
-\          detail
-\    - minor
-
-becomes
-
-list
-* major
-    - minor
-        - *important*
-          detail
-    - minor
-
--------------------------------------------------
-
--> # Supported markdown formatting <-
-
-A single *\<br\>* or *^* in a line indicates mdp
-to stop the output on that position.
-
-This can be used to show bullet points
-line by line.
-
-*\<br\>* is also not displayed in HTML converted
-output.
-
-Agenda
-<br>
-* major
-<br>
-    * minor
-<br>
-* major
-  ^
-    * minor
-      ^
-        * detail
-
--------------------------------------------------
-
--> # Supported markdown formatting <-
-
-Leading *->* indicates centering.
-
-\-> # test <-
-\-> ## test <-
-\-> test
-\-> \_\*test\*\_ <-
-
-becomes
-
--> # test <-
--> ## test <-
--> test
--> _*test*_ <-
-
--------------------------------------------------
-
--> # Supported markdown formatting <-
-
-URL in pandoc style are supported:
-
-\[Google](http://www.google.com/)
-
-becomes
-
-[Google](http://www.google.com/)
-
--------------------------------------------------
-
--> ## More information about markdown <-
-
-can be found in the [markdown documentation](http://daringfireball.net/projects/markdown/).
-
--------------------------------------------------
-
--> # Support for UTF-8 special characters <-
-
-Here are some examples.
-
-ae = ä, oe = ö, ue = ü, ss = ß
-upsilon = Ʊ, phi = ɸ
-
-▛▀▀▀▀▀▀▀▀▀▜
-▌rectangle▐
-▙▄▄▄▄▄▄▄▄▄▟
 
 
 -------------------------------------------------
