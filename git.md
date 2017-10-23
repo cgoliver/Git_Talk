@@ -363,7 +363,7 @@ First version
 
 ```
 $ git cat-file -p b1a1b80ca6f24ccdd220d8db24af08db4e096970
-Condensed matter matters
+condensed matter matters
 ```
 ^
 Second version
@@ -371,7 +371,7 @@ Second version
 ^
 ```
 $ git cat-file -p 3a918db0eb98806e55545a8457d5fa3675f5270c
-Condensed matter doesn't matter
+condensed matter doesn't matter
 ```
 ^
 We can revert back to the original version.
@@ -430,7 +430,7 @@ b1a1b80ca6f24ccdd220d8db24af08db4e096970 cmgs.txt
 ```
 ^
 
-`--add` is used to add new files to index.
+`--add` hashes file, stores to `.git/objects` and adds to index.
 `--cacheinfo` tells git to use the info already in `.git/objects`
 for this content.
 
@@ -459,6 +459,23 @@ $ git cat-file -p 9e51f861e7d8976a04cfbeb45003255a59bca9bd
 ^
 
 Now we can use the tree to get a filenames and hashes.
+^
+
+			+--------------+
+			|     tree     |
+			|--------------|
+			|     9e51     |
+			|              |
+			+------+-------+
+			       |
+			       |cmgs.txt
+			       v
+			+--------------+
+			|    blob      |
+			|--------------|
+			|    b1a1      |
+			|              |
+			+--------------+
 
 -------------------------------------------------
 
@@ -469,7 +486,6 @@ Let's make a new tree with the other version of `cmgs.txt`
 ```
 $ git update-index --cacheinfo 100644 \
  3a918db0eb98806e55545a8457d5fa3675f5270c cmgs.txt
-$ git update-index cmgs.txt  
 ```
 ^
 
@@ -484,23 +500,58 @@ Finally, make the tree..
 
 ```
 $ git write-tree
-$ git cat-file -p [tree hash\]
+$ git cat-file -p 34bfdc1c8a3d1d2bc487d79d9208650ef28415bc 
+100644 blob 3a918db0eb98806e55545a8457d5fa3675f5270c    cmgs.txt
+100644 blob fa49b077972391ad58037050f2a75f74e3671e92    new.txt
+
 ```
 
 -------------------------------------------------
 -> # Trees of trees
 
-We can add trees to our current tree.
+We can add trees to our current tree. This produces a new tree.
 ^
 ```
-git read-tree --prefix=other [tree hash]
-git write-tree
+$ git read-tree --prefix=v1 9e51f861e7d8976a04cfbeb45003255a59bca9bd 
+$ git write-tree
 
-git cat-file -p [tree hash]
+$ git cat-file -p c1b987fd9e44054318fc1786953b1a06ba0bfd5c 
+100644 blob 3a918db0eb98806e55545a8457d5fa3675f5270c    cmgs.txt
+100644 blob fa49b077972391ad58037050f2a75f74e3671e92    new.txt
+040000 tree 9e51f861e7d8976a04cfbeb45003255a59bca9bd    v1 
 ```
 
 -------------------------------------------------
--> # Summary
+-> # Our trees 
+
+
+
+                                +--------------+
+                                |     tree     |
+                                |--------------|
+                                |     c1b9     |
+                                |              |
+                                +-----++-------+
+                                  ++--+++-----------------+
+                                  ++                      |
+                      +-----------++----+                 |v1
+             cmgs.txt |                 | new.txt         |
+                      +                 +                 +
+              +--------------+   +--------------+  +--------------+
+              |    blob      |   |    blob      |  |    tree      |
+              |--------------|   |--------------|  |--------------|
+              |    3a91      |   |    fa49      |  |    9e51      |
+              |              |   |              |  |              |
+              +--------------+   +--------------+  +------+-------+
+                                                          |
+                                                          |
+                                                          v
+                                                   +--------------+
+                                                   |    blob      |
+                                                   |--------------|
+                                                   |    b1a1      |
+                                                   |              |
+                                                   +--------------+
 
 -------------------------------------------------
 -> # Commit objects
@@ -518,6 +569,20 @@ This is where the *commit* object comes in.
 
 -------------------------------------------------
 -> # Commit objects
+
+Commit objects store:
+1. Tree pointer 
+^
+2. Committer
+^
+3. Commit message
+^
+4. Timestamp 
+
+-------------------------------------------------
+
+-> # Creating commits
+
 
 
 -------------------------------------------------
