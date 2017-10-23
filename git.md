@@ -284,9 +284,11 @@ with the plumbing.
 $ cd ..
 $ git init Plumbing
 ```
+^
 
 Git computes the [SHA1](https://en.wikipedia.org/wiki/SHA-1) hash
 of the file's contents and an automatically generated header.
+^
 
 We can hash content from stdin:
 ^
@@ -295,9 +297,12 @@ We can hash content from stdin:
 $ echo "condensed matter matters" | git hash-object --stdin 
 b1a1b80ca6f24ccdd220d8db24af08db4e096970
 ```
+^
 
 Or from a file:
+
 ^
+
 ```
 $ echo "condensed matter matters" > cmgs.txt
 $ git hash-object cmgs.txt
@@ -307,15 +312,18 @@ b1a1b80ca6f24ccdd220d8db24af08db4e096970
 
 -------------------------------------------------
 
--> # Storing objects
+-> # Storing blobs 
 
 If we want git to store the result use `-w`
+^
 
 ```
 $ git hash-object -w cmgs.txt
 ```
+^
 
 This creates a compressed file in `.git/objects`
+^
 
 ```
 $ find .git/objects -type f
@@ -323,7 +331,7 @@ $ find .git/objects -type f
 ```
 
 -------------------------------------------------
--> # Low level version control
+-> # Low-level version control
 
 Let's make a new version of the file.
 ^
@@ -332,8 +340,9 @@ Let's make a new version of the file.
 $ echo "condensed matter doesn't matter" > cmgs.txt
 $ git hash-object -w cmgs.txt
 ```
+^
 
-Now we have two objects stores
+Now we have two objects stored
 ^
 
 ```
@@ -346,17 +355,19 @@ $ find .git/objects -type f
 -> # Reading blobs
 
 Since the hash depends on the content, we have 
-a content-addressable filesystem.
+a **content-addressable** filesystem.
 ^
 
 First version
 ^
+
 ```
 $ git cat-file -p b1a1b80ca6f24ccdd220d8db24af08db4e096970
 Condensed matter matters
 ```
 ^
 Second version
+
 ^
 ```
 $ git cat-file -p 3a918db0eb98806e55545a8457d5fa3675f5270c
@@ -364,6 +375,7 @@ Condensed matter doesn't matter
 ```
 ^
 We can revert back to the original version.
+
 ```
 $ git cat-file -p b1a1b80ca6f24ccdd220d8db24af08db4e096970 > cmgs.txt
 ```
@@ -373,6 +385,95 @@ So now we pretty much have a version control system!
 ^
 
 However, not very user-friendly.
+
+-------------------------------------------------
+-> # trees: remembering directories
+
+It is annoying to have to know the hash of each file
+by heart. We also haven't stored the filename.
+^
+
+This is where trees come in.
+^
+
+Trees are objects which contain *pointers* to:
+	* blobs
+	^
+	* other trees 
+
+You can think of them as *directories*.
+Directories contain files and other directories.
+
+-------------------------------------------------
+-> # Creating trees
+
+When you add files to the staging area, `git add`, 
+git creates an index of files and folders to track.
+^
+
+Git automatically creates trees and blobs based
+ on the index.
+^
+
+To make our own tree we have to make an index.
+^
+
+The index needs to know:
+	* mode (10064 means regular file)
+	* hash
+	* name
+^
+
+```
+$ git update-index --add --cacheinfo 100644 \
+b1a1b80ca6f24ccdd220d8db24af08db4e096970 cmgs.txt
+```
+^
+
+`--add` is used to add new files to index.
+`--cacheinfo` tells git to use the info already in `.git/objects`
+for this content.
+
+-------------------------------------------------
+
+-> # Creating trees (pt. 2)
+
+Now we can make a tree.
+^
+
+```
+$ git write-tree
+9e51f861e7d8976a04cfbeb45003255a59bca9bd
+```
+^
+
+This creates a tree based on current state of 
+the index and gives us its hash.
+
+```
+$ git cat-file -t 9e51f861e7d8976a04cfbeb45003255a59bca9bd
+tree
+$ git cat-file -p 9e51f861e7d8976a04cfbeb45003255a59bca9bd
+100644 blob b1a1b80ca6f24ccdd220d8db24af08db4e096970 cmgs.txt
+```
+^
+
+Now we can use the tree to get a filenames and hashes.
+
+-------------------------------------------------
+
+-> # More fun with trees
+
+                                 +---------+
+                                 |   tree  |
+                                 |         |
+                                 +----+----+
+                                      |
+                                      |
+                                      |
+                                      |
+                 cmgs.txt <-----------+
+
 
 -------------------------------------------------
 
