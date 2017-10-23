@@ -583,9 +583,160 @@ Commit objects store:
 
 -> # Creating commits
 
+We currently have 3 trees:
+* 9e51 -- cmgs.txt (original)
+* 34bf -- cmgs.txt (modified), new.txt
+* c1b9 -- cmgs.txt (modified), new.txt, v1 (tree)
+^
 
+The command `git commit-tree` creates a commit from a tree and
+optionally a parent commit.
+^
+
+```
+$ echo 'first commit' | git commit-tree 9e51
+5f2c3ae3513b23273dc775cc8c9117c870b92933
+```
+^
+
+This hash value depends on the data pointed too as well as
+the author, message, and timestamp.
 
 -------------------------------------------------
+-> # Viewing commit info
+
+Let's look at what's inside our commit.
+
+```
+$ git cat-file -p 5f2c3ae3513b23273dc775cc8c9117c870b92933 
+tree 9e51f861e7d8976a04cfbeb45003255a59bca9bd
+author Carlos G. Oliver <carlos.gonzalez.oliver@gmail.com> 1508759875 -0400
+committer Carlos G. Oliver <carlos.gonzalez.oliver@gmail.com> 1508759875 -0400
+
+first commit
+
+```
+^
+
+User info pulled from file `~/.gitconfig`
+
+-------------------------------------------------
+-> # Creating a history
+
+We can chain commits together by specifying a preceding commit
+at commit creation using the `-p` flag.
+^
+```
+echo 'second commit' | git commit-tree 34bf -p 5f2c
+64cd23d2a8da3ff0ea24daab7dc33ca40dd91adf
+echo 'third commit' | git commit-tree c1b0 -p c1b9
+06cdfb14114061185c292b5b5952ed13b9306855
+```
+
+We can now view our history using `git log`
+
+```
+commit 06cdfb14114061185c292b5b5952ed13b9306855
+Author: Carlos G. Oliver <carlos.gonzalez.oliver@gmail.com>
+Date:   Mon Oct 23 08:05:13 2017 -0400
+
+    third commit
+
+ v1/cmgs.txt | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 64cd23d2a8da3ff0ea24daab7dc33ca40dd91adf
+Author: Carlos G. Oliver <carlos.gonzalez.oliver@gmail.com>
+Date:   Mon Oct 23 08:04:09 2017 -0400
+
+    second commit
+
+ cmgs.txt | 2 +-
+ new.txt  | 1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+commit 5f2c3ae3513b23273dc775cc8c9117c870b92933
+Author: Carlos G. Oliver <carlos.gonzalez.oliver@gmail.com>
+Date:   Mon Oct 23 07:57:55 2017 -0400
+
+    first commit
+
+ cmgs.txt | 1 +
+ 1 file changed, 1 insertion(+)
+```
+
+-------------------------------------------------
+```
+  +--------------+    +--------------+    +--------------+
+  |    commit    |    |     tree     |    |     blob     |
+  |--------------|    |--------------|    |--------------|
+  |    06cd      +--->|    c1b9      +--->|  'doesn't'   +
+  |'third  comm.'|    |              |    |              |
+  +------+-------+    +------+-------+    +------+-------+
+         |                v1 |
+         |                   +----------------------------------+
+         v                                                      |
+  +--------------+    +--------------+                          |
+  |    commit    |    |     tree     |                          |
+  |--------------|    |--------------|                          |
+  |    64cd      +--->|    34bf      ++---->                    |
+  |'second com..'|    |              |                          |
+  +------+-------+    +------+-------+                          |
+         |                                                      |
+         |                                                      |
+         v                                                      |
+  +--------------+    +--------------+      +--------------+    |
+  |    commit    |    |     tree     |      |     blob     |    |
+  |--------------|    |--------------|cmgs  |--------------|    |
+  |    5f2c      +--->|    9e51      +----->|    9e51      +    |
+  |'first commit'|    |              |      |'cm matters'  |    |
+  +--------------+    +------+-------+      +------+-------+    |
+                             ^                                  |
+                             +---------------------------------++
+
+```
+-------------------------------------------------
+-> # References
+
+Okay it's time to finally get rid of those clunky SHA1 digests.
+^
+
+References are like nicknames for commit hash values.
+^
+
+They are stored in `.git/refs`
+^
+Let's create a reference to our latest commit and call it 'master'.
+^
+```
+echo 06cdfb14114061185c292b5b5952ed13b9306855 > .git/refs/heads/master
+```
+^
+Now `git log master` displays the history from our last commit. 
+^
+We can add a reference to a different state of our repo.
+^
+```
+echo 64cd23d2a8da3ff0ea24daab7dc33ca40dd91adf > .git/refs/heads/test
+```
+^
+Now we will only see changes from the second commit down.
+
+-------------------------------------------------
+-> # The HEAD
+
+To make our lives easier, git automatically stores
+a reference to our latest commit in a ref called HEAD.
+^
+
+This reference is stored in `.git/HEAD`
+^
+Running `git commit` makes a tree of your current index, points
+to the current value of `HEAD` as the predecessor and moves 
+`HEAD` to the new commit hash.
+
+-------------------------------------------------
+
 -> # Suspend your presentation for hands-on examples <-
 
 Use *Ctrl + z* to suspend the presentation.
