@@ -27,7 +27,7 @@ O     | O | |  -o  o-o        o--o   -o-
 ^
 * From the bottom: piping
 ^
-* GitHub collaborations
+* GitHub collaborations (part 2?)
 
 -------------------------------------------------
 
