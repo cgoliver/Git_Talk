@@ -1,9 +1,14 @@
 -------------------------------------------------
+```
+  o-o o   o  o-o   o-o                o  
+ /    |\ /| o     |     O          o  |  
+O     | O | |  -o  o-o        o--o   -o- 
+ \    |   | o   |     | O     |  | |  |  
+  o-o o   o  o-o  o--o        o--O |  o  
+                                 |       
+                              o--o       
 
--> +-+-+-+-+-+ +-+-+-+
--> |C|M|G|S|:| |g|i|t|
--> +-+-+-+-+-+ +-+-+-+
-
+```
 -> Carlos G. Oliver
 -> cgoliver@protonmail.com
 -> www.cgoliver.com
