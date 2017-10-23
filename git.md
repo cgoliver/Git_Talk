@@ -736,6 +736,94 @@ to the current value of `HEAD` as the predecessor and moves
 `HEAD` to the new commit hash.
 
 -------------------------------------------------
+-> # The HEAD and branching
+
+Now we have everything wee need to understand branches.
+^
+When you say `git branch test`
+^
+git creates a new reference to the latest commit. 
+
+```
+                                    +---------+
+                                    |  HEAD   |
+                                    +----+----+
+                                         v
+                                    +---------+
+                                    |  master |
+                                    +----+----+
+                                         v
+ +---------+      +---------+       +---------+
+ |         |      |         |       |         |
+ | 5f2c    |<-----+   64cd  |<------+ 06cd    |
+ +---------+      +---------+       +---------+
+                                         ^
+                                    +----+----+
+                                    |  test   |
+                                    +----+----+
+
+```
+
+-------------------------------------------------
+-> # Checkout moves HEAD
+
+```
+                                    +---------+
+                                    |  master |
+                                    +----+----+
+                                         v
+ +---------+      +---------+       +---------+
+ |         |      |         |       |         |
+ | 5f2c    |<-----+   64cd  |<------+ 06cd    |
+ +---------+      +---------+       +---------+
+                                         ^
+                                    +----+----+
+                                    |  test   |
+                                    +----+----+
+                                         ^
+                                    +----+----+
+                                    |  HEAD   |
+                                    +----+----+
+```
+
+-------------------------------------------------
+
+-> # Committing to a new branch
+
+Committing on a new branch moves head forward but master
+stays the same.
+
+
+
+
+```
+
+                                  +---------+
+                                  |  master |
+                                  +----+----+
+                                       v
+ +---------+      +---------+     +---------+     +---------+
+ |         |      |         |     |         |     |         |
+ | 5f2c    |<-----+   64cd  |<----+ 06cd    |<----+ 2jk2    |
+ +---------+      +---------+     +---------+     +---------+
+                                                       ^
+                                                  +----+----+
+                                                  |  test   |
+                                                  +----+----+
+                                                       ^
+                                                  +----+----+
+                                                  |  HEAD   |
+                                                  +----+----+
+```
+
+Compared to other VCS branching in git is super cheap.
+^
+All it takes is writing a 40 character string to a file.
+^
+In other VCS, branching involves making full copies of 
+directories and can take minutes to run.
+
+-------------------------------------------------
 
 -> # Suspend your presentation for hands-on examples <-
 
