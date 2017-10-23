@@ -464,19 +464,63 @@ Now we can use the tree to get a filenames and hashes.
 
 -> # More fun with trees
 
-                                 +---------+
-                                 |   tree  |
-                                 |         |
-                                 +----+----+
-                                      |
-                                      |
-                                      |
-                                      |
-                 cmgs.txt <-----------+
+Let's make a new tree with the other version of `cmgs.txt`
+
+```
+$ git update-index --cacheinfo 100644 \
+ 3a918db0eb98806e55545a8457d5fa3675f5270c cmgs.txt
+$ git update-index cmgs.txt  
+```
+^
+
+And just for fun let's add a new file.
+^
+```
+$ echo "new file" > new.txt
+$ git update-index --add new.txt
+```
+^
+Finally, make the tree..
+
+```
+$ git write-tree
+$ git cat-file -p [tree hash\]
+```
+
+-------------------------------------------------
+-> # Trees of trees
+
+We can add trees to our current tree.
+^
+```
+git read-tree --prefix=other [tree hash]
+git write-tree
+
+git cat-file -p [tree hash]
+```
+
+-------------------------------------------------
+-> # Summary
+
+-------------------------------------------------
+-> # Commit objects
+
+Finally, we have the commit object.
+^
+
+Trees helped us group files and filenames together.
+^
+
+But we still have to remember the tree hash.
+^
+
+This is where the *commit* object comes in.
+
+-------------------------------------------------
+-> # Commit objects
 
 
 -------------------------------------------------
-
 -> # Suspend your presentation for hands-on examples <-
 
 Use *Ctrl + z* to suspend the presentation.
